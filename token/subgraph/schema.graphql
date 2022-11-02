@@ -1,0 +1,62 @@
+type Nft @entity {
+  id: ID!
+  contract: NftContract!
+  tokenID: BigInt!
+  ownership: [Ownership!]! @derivedFrom(field: "nft")
+  tokenURI: String!
+  createdAt: BigInt!
+  removedAt: BigInt
+}
+
+type NftContract @entity {
+  id: ID!
+  name: String!
+  symbol: String
+  platform: Platform!
+  nfts: [Nft!]! @derivedFrom(field: "contract")
+}
+
+
+type Ownership @entity {
+  id: ID!
+  owner: Bytes!
+  nft: Nft!
+  quantity: BigInt!
+}
+
+type PositionOwnership @entity {
+  id: ID!
+  owner: Bytes!
+  userPosition: UserPosition!
+}
+
+enum Platform {
+  ReducedPenaltyReward
+  RewardAmplifierReward
+  IncreasedBlockReward
+}
+
+type FarmingData @entity {
+  id: ID!
+  totalActivePositions: BigInt
+}
+
+type Farm @entity {
+  id: ID!
+  pid: BigInt!
+  tokens: [Bytes!]!
+  validNFTs: [Bytes!]!
+  allocPoint: BigInt!
+  activePositions: BigInt
+}
+
+type UserPosition @entity {
+  id: ID!
+  farm: Farm!
+  ownership: PositionOwnership! @derivedFrom(field:"userPosition")
+  startBlock: BigInt!
+  endBlock: BigInt!
+  amounts: [BigInt!]!
+  nftReward: Nft
+  isActive: Boolean!
+}
